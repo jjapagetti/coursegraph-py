@@ -1,13 +1,10 @@
 import re
-import sys
-import strictyaml
-from strictyaml import EmptyList
-
+from typing import Union, List
 
 # 과목명,트랙,마이크로디그리,선수과목에는 문자만 사용되었는지 확인하는 함수
-def validate_string_or_sequence(value : str) -> str:
+def validate_string_or_sequence(value: Union[str, List[str], int]) -> Union[str, List[str], int]:
     """
-    과목명, 트랙, 마이크로디그리, 선수 과목에 문자만 사용되었는지 확인하는 함수입니다.
+    과목명, 트랙, 마이크로디그리, 선수 과목에 문자 또는 정수만 사용되었는지 확인하는 함수입니다.
 
     parameter:
     value(str) : 과목 하나당 문자열
@@ -30,6 +27,8 @@ def validate_string_or_sequence(value : str) -> str:
             return value
         else:
             raise ValueError("올바른 형식이 아닙니다.")
+            
+    raise ValueError(f"올바른 형식이 아닙니다: {value}")
     
 # 우선적으로 (학년, 학기, 과목명, 실습여부, 트랙, 마이크로디그리, 선수과목, 구분) 의 스키마를 정의해뒀습니다.
 schema = strictyaml.Map({
