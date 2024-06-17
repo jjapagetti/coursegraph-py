@@ -179,28 +179,33 @@ def draw_course_structure(subjects: Optional[strictyaml.YAML], output_file: str,
 
     edge_attrs = EdgeAttributes(edgelist=list(G.edges()), arrowsize=20, arrowstyle='->')
 
-    for subject in subjects:
-        node = subject['과목명']
-        x, y = pos[node]
-        plt.text(x, y, node, fontsize=15, ha='center', va='center',
-                 bbox=dict(facecolor='white', edgecolor=get_edge_color(subject['구분']), boxstyle='round,pad=0.5',
-                           linewidth=3))
+# 각 과목의 노드 텍스트 그리기
+for subject in subjects:
+    node = subject['과목명']
+    x, y = pos[node]
+    plt.text(x, y, node, fontsize=15, ha='center', va='center',
+             bbox=dict(facecolor='white', edgecolor=get_edge_color(subject['구분']), boxstyle='round,pad=0.5',
+                       linewidth=3))
 
+# 학년별 노드 최상단에 텍스트 추가
+bbox_props = dict(boxstyle=f"round,pad=0.5", ec='black', lw=2, facecolor='white')
+for x in range(1, 5):
+    plt.text(x, -0.18, f"{x}학년", fontsize=18, ha='center', va='center', fontweight='bold', bbox=bbox_props)
+for y in range(1, 3):
+    plt.text(0.15, y - 0.5, f"{y}학기", fontsize=18, ha='center', va='center', fontweight='bold', bbox=bbox_props)
 
-    #학년 노드 최상단
-    bbox_props = dict(boxstyle=f"round,pad=0.5", ec='black', lw=2, facecolor='white')
-    for x in range(1,5):
-        plt.text(x,-0.18, f"{x}학년", fontsize=18, ha='center', va='center', fontweight='bold', bbox=bbox_props)
-    for y in range(1,3):
-        plt.text(0.15,y-0.5, f"{y}학기", fontsize=18, ha='center', va='center', fontweight='bold', bbox=bbox_props)
+# 엣지 색상 및 두께 설정
+edge_colors = ['blue' for _ in range(len(edge_attrs.edgelist))]  # 모든 엣지를 파란색으로 설정
+edge_widths = [2.0 for _ in range(len(edge_attrs.edgelist))]   # 모든 엣지의 두께를 2.0으로 설정
 
-    nx.draw_networkx_edges(G, pos, edgelist=edge_attrs.edgelist,
+nx.draw_networkx_edges(G, pos, edgelist=edge_attrs.edgelist,
                        arrowstyle=edge_attrs.arrowstyle,
                        connectionstyle='arc3,rad=0',
-                       arrowsize=50,
+                       arrowsize=edge_attrs.arrowsize,  # arrowsize 설정 추가
                        min_source_margin=20,
                        min_target_margin=70,
-                       width=2.0)
+                       edge_color=edge_colors,
+                       width=edge_widths)
 
     plt.title("과목 이수 체계도")
     plt.xlabel('학년')
